@@ -14,7 +14,7 @@ project(rp2040_cdc_console)
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-add_executable(${CMAKE_PROJECT_NAME} src/hello_usb.c)
+add_executable(${CMAKE_PROJECT_NAME} src/main.c)
 
 # pull in common dependencies
 target_link_libraries(${CMAKE_PROJECT_NAME} pico_stdlib)
