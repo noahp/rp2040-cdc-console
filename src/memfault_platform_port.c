@@ -14,29 +14,15 @@
 #include "../pico-sdk/src/rp2_common/cmsis/stub/CMSIS/Device/RaspberryPi/RP2040/Include/RP2040.h"
 #include "memfault/components.h"
 #include "memfault/ports/reboot_reason.h"
+#include "pico/unique_id.h"
 
 static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex"};
 
-#ifdef BOARD_stm32f4discovery
-
 static void prv_init_device_serial(void) {
-  uint8_t uid[96 / 8] = {0};
-  // newlib-nano doesn't have memcpy_s :( disable this clang-tidy warning
-  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
-  memcpy(&uid, (uint8_t *)UID_BASE, sizeof(uid));
-
-  char uid_str[sizeof(uid) * 2 + 1];
-  for (size_t i = 0; i < sizeof(uid); i++) {
-    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
-    snprintf(uid_str + 2 * i, 3, "%02x", uid[i]);
-  }
-
-  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
-  snprintf(device_serial, sizeof(device_serial), "%s-noahp", uid_str);
+  char uid_str[PICO_UNIQUE_BOARD_ID_SIZE_BYTES * 2 + 1] = {0};
+  pico_get_unique_board_id_string(uid_str, sizeof(uid_str));
+  snprintf(device_serial, sizeof(device_serial), "%s-pico", uid_str);
 }
-#else
-static void prv_init_device_serial(void) {}
-#endif
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
   // IMPORTANT: All strings returned in info must be constant
