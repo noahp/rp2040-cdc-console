@@ -13,6 +13,24 @@ static sMemfaultShellImpl memfault_shell_impl = {
     .send_char = send_char,
 };
 
+// set up LED for blinking
+const uint LED_PIN = PICO_DEFAULT_LED_PIN;
+static void prv_init_led(void) {
+  gpio_init(LED_PIN);
+  gpio_set_dir(LED_PIN, GPIO_OUT);
+}
+
+// polling blink the LED
+static void prv_blink_led(void) {
+  static absolute_time_t last_blink = 0;
+
+  absolute_time_t now = get_absolute_time();
+  if (absolute_time_diff_us(last_blink, now) > 250 * 1000) {
+    last_blink = now;
+    gpio_put(LED_PIN, !gpio_get(LED_PIN));
+  }
+}
+
 int main(void) {
   stdio_init_all();
   // Wait a bit after setup, required on my computer
@@ -27,12 +45,16 @@ int main(void) {
   memfault_demo_shell_boot(&memfault_shell_impl);
   memfault_platform_boot();
 
-  while (1) {
-    char c;
+  prv_init_led();
 
-    if (read(0, &c, sizeof(c))) {
-      memfault_demo_shell_receive_char(c);
+  while (1) {
+    // non-blocking readchar
+    int c = getchar_timeout_us(0);
+    if (c != EOF) {
+      memfault_demo_shell_receive_char((char)c);
     }
+
+    prv_blink_led();
   }
   return 0;
 }
