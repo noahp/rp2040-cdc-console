@@ -26,7 +26,7 @@ https://github.com/raspberrypi/pico-examples/tree/afd1d2008f3fb3fa7a837dd1bdf17a
 ❯ git clone --recursive https://github.com/noah/rp2040-cdc-console.git
 ❯ cd rp2040-cdc-console
 ❯ cmake -B build -GNinja
-❯ cmake --build build --parallel $(nproc)
+❯ cmake --build build
 ```
 
 To flash the board, put it in BOOT mode by holding the BOOTSEL button and power
