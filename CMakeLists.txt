@@ -44,6 +44,24 @@ target_link_libraries(
   pico_stdlib
 )
 
+# add gnu build id linker option
+target_link_options(
+  ${CMAKE_PROJECT_NAME}
+  PRIVATE
+  LINKER:--build-id
+)
+
+get_filename_component(
+  pico_linker_file_abs
+  "${CMAKE_CURRENT_LIST_DIR}/src/memmap_default.ld"
+  ABSOLUTE
+)
+set_target_properties(
+  ${CMAKE_PROJECT_NAME}
+  PROPERTIES PICO_TARGET_LINKER_SCRIPT
+             ${pico_linker_file_abs}
+)
+
 # enable usb output, disable uart output
 pico_enable_stdio_usb(
   ${CMAKE_PROJECT_NAME}
