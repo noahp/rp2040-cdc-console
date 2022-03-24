@@ -50,7 +50,8 @@ target_link_options(
   PRIVATE
   LINKER:--build-id
 )
-
+# vendor the linker script to add the necessary stuff for build id:
+# https://docs.memfault.com/docs/mcu/arm-cortex-m-guide/#add-a-unique-identifier-to-target
 get_filename_component(
   pico_linker_file_abs
   "${CMAKE_CURRENT_LIST_DIR}/src/memmap_default.ld"
@@ -106,5 +107,6 @@ target_include_directories(
           ${MEMFAULT_SDK_ROOT}/ports/include
           ${MEMFAULT_PORT_ROOT}
           src
+          # needed for CMSIS headers for NVIC_SystemReset
           pico-sdk/src/rp2_common/cmsis/stub/CMSIS/Core/Include
 )
