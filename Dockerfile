@@ -14,3 +14,9 @@ RUN apk add --no-cache \
 
 # install ninja (note that alpine has to install from source)
 RUN python3 -m pip install ninja==1.10.2.3
+
+
+COPY docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+WORKDIR /workspace
