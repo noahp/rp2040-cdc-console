@@ -9,12 +9,12 @@ RUN apk add --no-cache \
     cmake \
     gcc-arm-none-eabi \
     newlib-arm-none-eabi \
+    ninja \
     python3 \
-    py3-pip
-
-# install ninja (note that alpine has to install from source)
-RUN python3 -m pip install ninja==1.10.2.3
-
+    && rm -rf /usr/arm-none-eabi/lib/thumb/v7* \
+    && rm -rf /usr/arm-none-eabi/lib/thumb/v8* \
+    && rm -rf /usr/arm-none-eabi/lib/arm* \
+    && rm -rf /usr/bin/lto-dump
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
