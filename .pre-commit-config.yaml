@@ -1,18 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-  - repo: local
-    hooks:
-      - id: cmake-format
-        name: cmake-format
-        description: cmake-format can format your listfiles nicely so that they don't look like crap.
-        entry: cmake-format
-        args: [--in-place, --dangle-parens, --max-pargs-hwrap=1]
-        language: python
-        additional_dependencies: ["cmakelang==0.6.13"]
-        types: [cmake]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.4.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
@@ -34,29 +24,29 @@ repos:
       - id: trailing-whitespace # trims trailing whitespace.
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.14.2
+    rev: 0.19.2
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
 
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.12.0
     hooks:
       - id: black
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+    rev: 5.11.4
     hooks:
       - id: isort
         args: [--profile=black]
 
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.13.5
+    rev: v2.15.9
     hooks:
       - id: pylint
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.942"
+    rev: "v0.991"
     hooks:
       - id: mypy
 
@@ -66,11 +56,32 @@ repos:
       - id: dockerfilelint
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.8.0.4
+    rev: v0.9.0.2
     hooks:
       - id: shellcheck
 
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v13.0.1
+  - repo: local
     hooks:
-      - id: clang-format
+
+      - id: cmake-format
+        name: cmake-format
+        description: cmake-format can format your listfiles nicely so that they don't look like crap.
+        entry: cmake-format
+        args: [--in-place, --dangle-parens, --max-pargs-hwrap=1]
+        language: python
+        additional_dependencies: ["cmakelang==0.6.13", "pyyaml==6.0"]
+        types: [cmake]
+
+      # use a system-managed git-clang-format binary. the existing clang-format
+      # pre-commit hook is only full-file, so it's simpler to do things
+      # ourselves:
+      # https://github.com/pre-commit/mirrors-clang-format/blob/46516e8f532c8f2d55e801c34a740ebb8036365c/.pre-commit-hooks.yaml
+      - id: git-clang-format
+        name: git-clang-format
+        entry: git-clang-format
+        language: system
+        types_or: [c++, c]
+        args: ["--style=file", "--"]
+        # git-clang-format uses a .git/clang-format-index.lock file, so only
+        # run a single process at a time
+        require_serial: true
