@@ -110,3 +110,12 @@ target_include_directories(
           # needed for CMSIS headers for NVIC_SystemReset
           pico-sdk/src/rp2_common/cmsis/stub/CMSIS/Core/Include
 )
+
+# use the DTR line to reset the device into boot mode, and flash with picotool
+add_custom_target(
+  flash
+  COMMAND python -m serial --dtr 0 /dev/ttyACM0 1200 2>&1 >/dev/null || true
+  COMMAND sleep 0.5
+  COMMAND picotool load -v $<TARGET_PROPERTY:${CMAKE_PROJECT_NAME},NAME>.bin
+  COMMAND picotool reboot
+)
