@@ -192,6 +192,16 @@ void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt,
   va_end(args);
 }
 
+void memfault_platform_log_raw(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+
+  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+  vprintf(fmt, args);
+
+  va_end(args);
+}
+
 bool memfault_platform_metrics_timer_boot(
     uint32_t period_sec, MemfaultPlatformTimerCallback callback) {
   (void)period_sec, (void)callback;
